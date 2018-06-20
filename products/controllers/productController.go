@@ -1,44 +1,37 @@
 package controllers
 
 import(
-	"encoding/json"
-	"net/http"
-	"gopkg.in/mgo.v2"
-
-	"github.com/gorilla/mux"
+	"github.com/capt4ce/ecommerce-microservice/products/common"
+	"github.com/capt4ce/ecommerce-microservice/products/models"
 )
 
-// to get the product list
 func GetProducts(w http.ResponseWriter, r *http.Request) {
-	context := NewContext()
-	defer context.Close()
-	collection := context.DbCollection("products")
-	repo := mgo.Collection{collection}
-	products :=repo.GetAll()
-	j, err := json.Marshal(ProductsResource{Data: products})
-	if err != nil {
-		common.DisplayAppError(w, err, "An unexpected error has occurred", 500)
+	mongo_session = common.GetDbSession()
+	defer mongo_session.Close()
+
+	var products []*models.Product
+	if err := mongo_session.DB("products").C("product").
+		Find(nil).Sort("-when").Limit(100).All(&products); err != nil {
+
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	w.Write(j)
+
+	// write it out
+	if err := json.NewEncoder(w).Encode(products); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 }
 
-
-// adding a new product to the database
 func CreateProduct(w http.ResponseWriter, r *http.Request) {
-	
+
 }
 
-
-// getting a specific product with corresponding Id
 func GetProductById(w http.ResponseWriter, r *http.Request) {
-	
+
 }
 
-
-// delete a product from the database
 func DeleteProduct(w http.ResponseWriter, r *http.Request) {
-	
+
 }

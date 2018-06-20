@@ -58,7 +58,7 @@ func initConfig() {
 var session *mgo.Session
 
 // Get database session
-func GetDbSession() *mgo.Session {
+func GetSession() *mgo.Session {
 	if session == nil {
 		session = createDbSession()
 	}
