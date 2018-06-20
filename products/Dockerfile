@@ -1,7 +1,7 @@
 FROM golang:1.9.2-alpine3.6 AS build
 
 ENV ROOT_SRC github.com/capt4ce/ecommerce-microservice
-ENV SRV items
+ENV SRV products
 ENV SRV_SRC $ROOT_SRC/$SRV
 RUN echo $ROOT_SRC
 RUN echo $SRV_SRC
